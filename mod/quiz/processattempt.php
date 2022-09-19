@@ -100,5 +100,5 @@ if ($status == quiz_attempt::OVERDUE) {
     redirect($nexturl);
 } else {
     // Attempt abandoned or finished.
-    redirect($attemptobj->review_url());
+    redirect($attemptobj->view_url()); // GCHLOL: do not show review option review_url()
 }
