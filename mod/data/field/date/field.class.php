@@ -215,4 +215,23 @@ class data_field_date extends data_field_base {
         }
         return $configs;
     }
+
+    /**
+     * Per default, return the record's text value only from the "content" field.
+     * Override this in fields class if necesarry.
+     * 
+     * GCHLOL: Override method to display in human readable format.
+     *
+     * @param string $record
+     * @return string
+     */
+    function export_text_value($record) {
+        if ($this->text_export_supported()) {
+            if (!is_numeric($record->content)) {
+                return '';
+            }
+
+            return userdate($record->content, get_string('strftimedatefullshort', 'langconfig'));
+        }
+    }
 }
