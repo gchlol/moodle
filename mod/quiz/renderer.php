@@ -741,10 +741,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 new moodle_url($attemptobj->processattempt_url(), $options),
                 get_string('submitallandfinish', 'quiz'));
         $button->id = 'responseform';
+        /* GCHLOL: Remove extra popup.
         if ($attemptobj->get_state() == quiz_attempt::IN_PROGRESS) {
             $button->add_action(new confirm_action(get_string('confirmclose', 'quiz'), null,
                     get_string('submitallandfinish', 'quiz')));
         }
+        */
 
         $duedate = $attemptobj->get_due_date();
         $message = '';
