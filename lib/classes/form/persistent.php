@@ -228,7 +228,14 @@ abstract class persistent extends moodleform {
 
         foreach ($data as $field => $value) {
             // Clean data if it is to be displayed in a form.
-            if (isset($allproperties[$field]['type'])) {
+            if (
+                isset($allproperties[$field]['type']) &&
+                // GCH NL: Don't clean null values where null is allowed to avoid casting. e.g. null -> zero.
+                (
+                    $data->$field !== null ||
+                    $allproperties[$field]['null'] === NULL_NOT_ALLOWED
+                )
+            ) {
                 $data->$field = clean_param($data->$field, $allproperties[$field]['type']);
             }
 
