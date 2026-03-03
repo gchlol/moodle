@@ -1387,28 +1387,6 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
 
             $incomplete = false;
         }
-
-        //$sql = "SELECT sc.id, sub.value
-        //      FROM {scorm_scoes} sc
-        // LEFT JOIN (SELECT v.scoid, v.value
-        //              FROM {scorm_attempt} a
-        //              JOIN {scorm_scoes_value} v ON a.id = v.attemptid
-        //              JOIN {scorm_element} e on e.id = v.elementid AND e.element = :element
-        //             WHERE a.userid = :userid AND a.attempt = :attempt AND a.scormid = :scormid) sub ON sub.scoid = sc.id
-        //     WHERE sc.scormtype = 'sco' AND sc.scorm = :scormid2";
-        //$tracks = $DB->get_recordset_sql($sql, [ 'userid' => $userid, 'attempt' => $attempt,
-        //    'element' => $completionelement, 'scormid' => $scorm->id,
-        //    'scormid2' => $scorm->id ]);
-        //
-        //foreach ($tracks as $track) {
-        //    if (($track->value == 'completed') || ($track->value == 'passed') || ($track->value == 'failed')) {
-        //        $incomplete = false;
-        //    } else {
-        //        $incomplete = true;
-        //        break; // Found an incomplete sco, so the result as a whole is incomplete.
-        //    }
-        //}
-        //$tracks->close();
     }
 
     // Validate user request to start a new attempt.
