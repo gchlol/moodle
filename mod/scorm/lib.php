@@ -1332,7 +1332,7 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
     $completionelement = $completionelements[$scormversion];
 
     $scoeids = $DB->get_fieldset(
-        'scorm_scores',
+        'scorm_scoes',
         'id',
         [
             'scormtype' => 'sco',
@@ -1351,7 +1351,7 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
                         e.id = v.elementid
                     JOIN {scorm_attempt} a ON
                         a.id = v.attemptid
-            WHERE   v.scoid $scoessql
+            WHERE   v.scoid $scoessql AND
                     e.element = :element AND
                     a.userid = :userid AND
                     a.attempt = :attempt AND
