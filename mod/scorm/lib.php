@@ -1331,27 +1331,63 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
     }
     $completionelement = $completionelements[$scormversion];
 
-    $sql = "SELECT sc.id, sub.value
-              FROM {scorm_scoes} sc
-         LEFT JOIN (SELECT v.scoid, v.value
-                      FROM {scorm_attempt} a
-                      JOIN {scorm_scoes_value} v ON a.id = v.attemptid
-                      JOIN {scorm_element} e on e.id = v.elementid AND e.element = :element
-                     WHERE a.userid = :userid AND a.attempt = :attempt AND a.scormid = :scormid) sub ON sub.scoid = sc.id
-             WHERE sc.scormtype = 'sco' AND sc.scorm = :scormid2";
-    $tracks = $DB->get_recordset_sql($sql, ['userid' => $userid, 'attempt' => $attempt,
-                                            'element' => $completionelement, 'scormid' => $scorm->id,
-                                            'scormid2' => $scorm->id]);
+    $scoeids = $DB->get_fieldset(
+        'scorm_scoes',
+        'id',
+        [
+            'scormtype' => 'sco',
+            'scorm' => $scorm->id
+        ]
+    );
 
-    foreach ($tracks as $track) {
-        if (($track->value == 'completed') || ($track->value == 'passed') || ($track->value == 'failed')) {
+    if (!empty($scoeids)) {
+        [ $scoessql, $scoesparams ] = $DB->get_in_or_equal($scoeids, SQL_PARAMS_NAMED);
+
+        $sql = "
+            SELECT  v.scoid,
+                    v.value
+            FROM    {scorm_scoes_value} v
+                    JOIN {scorm_element} e ON
+                        e.id = v.elementid
+                    JOIN {scorm_attempt} a ON
+                        a.id = v.attemptid
+            WHERE   v.scoid $scoessql AND
+                    e.element = :element AND
+                    a.userid = :userid AND
+                    a.attempt = :attempt AND
+                    a.scormid = :scormid
+        ";
+
+        $scoevalues = $DB->get_records_sql_menu(
+            $sql,
+            array_merge(
+                $scoesparams,
+                [
+                    'element' => $completionelement,
+                    'userid' => $userid,
+                    'attempt' => $attempt,
+                    'scormid' => $scorm->id,
+                ]
+            )
+        );
+
+        foreach ($scoeids as $scoeid) {
+            $value = $scoevalues[$scoeid] ?? null;
+            if (
+                $value === null ||
+                !in_array(
+                    $value,
+                    ['completed', 'passed', 'failed']
+                )
+            ) {
+                $incomplete = true;
+
+                break;
+            }
+
             $incomplete = false;
-        } else {
-            $incomplete = true;
-            break; // Found an incomplete sco, so the result as a whole is incomplete.
         }
     }
-    $tracks->close();
 
     // Validate user request to start a new attempt.
     if ($incomplete === true) {
