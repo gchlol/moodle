@@ -28,6 +28,7 @@
 
 use core_completion\activity_custom_completion;
 use core_courseformat\base as course_format;
+use local_lolcompletion\local\api\completion;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -655,6 +656,7 @@ class completion_info {
 
         // If the overall completion state has changed, update it in the cache.
         if ($newstate != $current->completionstate) {
+            completion::archive_before_state_update($this->course_id, $cm->id, $userid, $newstate, $current->completionstate);
             $current->completionstate = $newstate;
             $current->timemodified    = time();
             $current->overrideby      = $override ? $USER->id : null;
