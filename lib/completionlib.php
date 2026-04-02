@@ -612,6 +612,8 @@ class completion_info {
             }
         }
 
+        // GCHLOL - Archive the current state of this activity for user. Do this before updating the state.
+        \local_lolcompletion\local\api\completion::archive_before_state_update($this->course_id, $cm->id, $userid, $possibleresult, $current->completionstate);
         // Get current value of completion state and do nothing if it's same as
         // the possible result of this change. If the change is to COMPLETE and the
         // current value is one of the COMPLETE_xx subtypes, ignore that as well
