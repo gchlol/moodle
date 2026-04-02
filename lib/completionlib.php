@@ -28,6 +28,7 @@
 
 use core_completion\activity_custom_completion;
 use core_courseformat\base as course_format;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
