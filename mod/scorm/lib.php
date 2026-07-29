@@ -266,7 +266,9 @@ function scorm_update_instance($scorm, $mform=null) {
     scorm_parse($scorm, (bool)$scorm->updatefreq);
 
     scorm_grade_item_update($scorm);
+    /* GCHLOL MF Interferes with LOL completion and archives all users.
     scorm_update_grades($scorm);
+    */
     scorm_update_calendar($scorm, $cmid);
     \core_completion\api::update_completion_date_event($cmid, 'scorm', $scorm, $completionexpected);
 
